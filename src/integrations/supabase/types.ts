@@ -9,13 +9,126 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          quantity: number
+          service_id: number | null
+          status: string
+          total: number
+          url: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          quantity: number
+          service_id?: number | null
+          status?: string
+          total: number
+          url: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          quantity?: number
+          service_id?: number | null
+          status?: string
+          total?: number
+          url?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          estimated_process_time: string | null
+          id: number
+          name: string
+          price_per_1000: number
+          tag: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          estimated_process_time?: string | null
+          id?: number
+          name: string
+          price_per_1000: number
+          tag?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          estimated_process_time?: string | null
+          id?: number
+          name?: string
+          price_per_1000?: number
+          tag?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          balance: number
+          created_at: string | null
+          email: string
+          id: string
+          is_banned: boolean
+          role: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string | null
+          email: string
+          id?: string
+          is_banned?: boolean
+          role?: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_banned?: boolean
+          role?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_my_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
