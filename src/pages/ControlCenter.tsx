@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Users, 
@@ -75,7 +75,7 @@ export default function ControlCenter() {
       const completedOrders = orders.filter(order => order.status === 'completed').length;
       const totalRevenue = orders
         .filter(order => order.status === 'completed')
-        .reduce((sum, order) => sum + parseFloat(order.total || '0'), 0);
+        .reduce((sum, order) => sum + parseFloat(order.total?.toString() || '0'), 0);
 
       setStats({
         totalUsers,
