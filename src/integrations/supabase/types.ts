@@ -12,26 +12,35 @@ export type Database = {
       orders: {
         Row: {
           created_at: string | null
-          id: number
+          id: string
+          notes: string | null
           quantity: number
           service_id: number | null
-          status: string | null
+          status: string
+          total: number
+          url: string
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
-          id?: number
+          id?: string
+          notes?: string | null
           quantity: number
           service_id?: number | null
-          status?: string | null
+          status?: string
+          total: number
+          url: string
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
-          id?: number
+          id?: string
+          notes?: string | null
           quantity?: number
           service_id?: number | null
-          status?: string | null
+          status?: string
+          total?: number
+          url?: string
           user_id?: string | null
         }
         Relationships: [
@@ -53,56 +62,60 @@ export type Database = {
       }
       services: {
         Row: {
-          created_by: string | null
+          category: string | null
+          created_at: string | null
           description: string | null
+          estimated_process_time: string | null
           id: number
           name: string
-          price: number
+          price_per_1000: number
+          tag: string | null
         }
         Insert: {
-          created_by?: string | null
+          category?: string | null
+          created_at?: string | null
           description?: string | null
+          estimated_process_time?: string | null
           id?: number
           name: string
-          price: number
+          price_per_1000: number
+          tag?: string | null
         }
         Update: {
-          created_by?: string | null
+          category?: string | null
+          created_at?: string | null
           description?: string | null
+          estimated_process_time?: string | null
           id?: number
           name?: string
-          price?: number
+          price_per_1000?: number
+          tag?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "services_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       users: {
         Row: {
-          balance: number | null
+          balance: number
+          created_at: string | null
           email: string
           id: string
-          is_banned: boolean | null
+          is_banned: boolean
           role: string
         }
         Insert: {
-          balance?: number | null
+          balance?: number
+          created_at?: string | null
           email: string
-          id: string
-          is_banned?: boolean | null
+          id?: string
+          is_banned?: boolean
           role?: string
         }
         Update: {
-          balance?: number | null
+          balance?: number
+          created_at?: string | null
           email?: string
           id?: string
-          is_banned?: boolean | null
+          is_banned?: boolean
           role?: string
         }
         Relationships: []
