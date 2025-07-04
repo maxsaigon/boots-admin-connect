@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { badgeVariants } from '@/components/ui/badge-variants';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -13,6 +14,7 @@ import {
   DollarSign,
   Clock
 } from 'lucide-react';
+import { VariantProps } from 'class-variance-authority';
 
 interface DashboardStats {
   totalUsers: number;
@@ -37,45 +39,38 @@ export default function ControlCenter() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchDashboardStats();
-  }, []);
-
-  const fetchDashboardStats = async () => {
+  // Đặt fetchDashboardStats trước useEffect để tránh lỗi reference
+  const fetchDashboardStats = useCallback(async () => {
     try {
       // Fetch user stats
       const { data: usersData, error: usersError } = await supabase
         .from('users')
         .select('is_banned');
-      
       if (usersError) throw usersError;
 
       // Fetch services count
       const { count: servicesCount, error: servicesError } = await supabase
         .from('services')
         .select('*', { count: 'exact', head: true });
-      
       if (servicesError) throw servicesError;
 
       // Fetch orders stats
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
         .select('status, total');
-      
       if (ordersError) throw ordersError;
 
       // Process the data
       const totalUsers = usersData?.length || 0;
-      const bannedUsers = usersData?.filter(user => user.is_banned).length || 0;
-      const totalServices = servicesCount || 0;
-      
+      const bannedUsers = usersData?.filter((user: any) => user.is_banned).length || 0;
+      const totalServices = servicesCount ?? 0;
       const orders = ordersData || [];
-      const pendingOrders = orders.filter(order => order.status === 'pending_review').length;
-      const processingOrders = orders.filter(order => order.status === 'processing').length;
-      const completedOrders = orders.filter(order => order.status === 'completed').length;
+      const pendingOrders = orders.filter((order: any) => order.status === 'pending_review').length;
+      const processingOrders = orders.filter((order: any) => order.status === 'processing').length;
+      const completedOrders = orders.filter((order: any) => order.status === 'completed').length;
       const totalRevenue = orders
-        .filter(order => order.status === 'completed')
-        .reduce((sum, order) => sum + parseFloat(order.total?.toString() || '0'), 0);
+        .filter((order: any) => order.status === 'completed')
+        .reduce((sum: number, order: any) => sum + parseFloat(order.total?.toString() || '0'), 0);
 
       setStats({
         totalUsers,
@@ -96,7 +91,11 @@ export default function ControlCenter() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, [fetchDashboardStats]);
 
   const dashboardCards = [
     {
@@ -143,21 +142,21 @@ export default function ControlCenter() {
       value: stats.pendingOrders,
       icon: Clock,
       color: 'text-warning',
-      badge: 'warning',
+      badge: 'warning' as VariantProps<typeof badgeVariants>["variant"],
     },
     {
       label: 'Processing',
       value: stats.processingOrders,
       icon: Activity,
       color: 'text-accent',
-      badge: 'default',
+      badge: 'default' as VariantProps<typeof badgeVariants>["variant"],
     },
     {
       label: 'Completed',
       value: stats.completedOrders,
       icon: ShoppingCart,
       color: 'text-success',
-      badge: 'success',
+      badge: 'success' as VariantProps<typeof badgeVariants>["variant"],
     },
   ];
 
@@ -235,7 +234,7 @@ export default function ControlCenter() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-2xl font-bold text-foreground">{stat.value}</span>
-                        <Badge variant={stat.badge as any} className="text-xs">
+                        <Badge variant={stat.badge} className="text-xs">
                           {stat.value > 0 ? 'Active' : 'None'}
                         </Badge>
                       </div>
